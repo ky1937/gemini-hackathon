@@ -1,0 +1,14 @@
+com\hackathon\spmguidance\dto\AnalysisResponse.class
+com\hackathon\spmguidance\SpmGuidanceApplication.class
+com\hackathon\spmguidance\service\GeminiService.class
+com\hackathon\spmguidance\controller\RecommendationController.class
+com\hackathon\spmguidance\dto\SpmSubject.class
+com\hackathon\spmguidance\controller\ImageAnalysisController.class
+com\hackathon\spmguidance\service\RecommendationService.class
+com\hackathon\spmguidance\dto\SpmAnalysisRequest.class
+com\hackathon\spmguidance\dto\ChatResponse.class
+com\hackathon\spmguidance\service\ImageAnalysisService.class
+com\hackathon\spmguidance\dto\Recommendation.class
+com\hackathon\spmguidance\config\WebConfig.class
+com\hackathon\spmguidance\dto\ChatRequest.class
+com\hackathon\spmguidance\controller\ChatController.class
