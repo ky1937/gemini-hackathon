@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPM Education Guidance System</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .navigation {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .nav-button {
+            flex: 1;
+            padding: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-button:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .nav-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        /* Chat Interface Styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.assistant {
+            background: white;
+            color: #333;
+            border: 1px solid #e9ecef;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            border-color: #667eea;
+        }
+
+        .subject-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .subject-row .form-input,
+        .subject-row .form-select {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* File Upload Styles */
+        .file-upload {
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .file-upload:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .file-upload.drag-over {
+            background: #e7e9ff;
+            border-color: #667eea;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        /* Results Display Styles */
+        .results-container {
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .results-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .subjects-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .subjects-table th,
+        .subjects-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .subjects-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .subjects-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .grade-A-plus, .grade-A {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .grade-B-plus, .grade-B {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .grade-C-plus, .grade-C {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .recommendation-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+
+        .recommendation-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .recommendation-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .recommendation-card p {
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .match-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .match-high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .match-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .match-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .summary-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .subject-row {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .nav-button {
+                border-bottom: 1px solid #e9ecef;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // API Base URL - Please modify according to your backend address
+        const API_BASE_URL = 'http://localhost:8080/api';
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('chat');
+            
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🎓 SPM Education Guidance System</h1>
+                        <p>Intelligent Education Planning for Malaysian SPM Students</p>
+                    </div>
+                    
+                    <div className="navigation">
+                        <button 
+                            className={`nav-button ${activeTab === 'chat' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('chat')}
+                        >
+                            💬 AI Chat Consultation
+                        </button>
+                        <button 
+                            className={`nav-button ${activeTab === 'image' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('image')}
+                        >
+                            📸 Upload Result Slip
+                        </button>
+                        <button 
+                            className={`nav-button ${activeTab === 'manual' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('manual')}
+                        >
+                            ✏️ Manual Entry
+                        </button>
+                    </div>
+                    
+                    <div className="content">
+                        {activeTab === 'chat' && <ChatInterface />}
+                        {activeTab === 'image' && <ImageUpload />}
+                        {activeTab === 'manual' && <ManualInput />}
+                    </div>
+                </div>
+            );
+        }
+
+        // Chat Interface Component
+        function ChatInterface() {
+            const [messages, setMessages] = useState([
+                { role: 'assistant', content: 'Hello! I\'m your AI Education Guidance Assistant. I can help you explore universities, courses, scholarships, and career pathways in Malaysia. Feel free to ask me anything!' }
+            ]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+
+            const sendMessage = async () => {
+                if (!input.trim() || loading) return;
+
+                const userMessage = input.trim();
+                setInput('');
+                setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+                setLoading(true);
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: userMessage })
+                    });
+
+                    const data = await response.json();
+                    setMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'Sorry, I cannot answer right now.' }]);
+                } catch (error) {
+                    setMessages(prev => [...prev, { 
+                        role: 'assistant', 
+                        content: 'Sorry, there was an error connecting to the server. Please ensure the backend service is running.' 
+                    }]);
+                }
+
+                setLoading(false);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            };
+
+            return (
+                <div className="chat-container">
+                    <div className="chat-messages">
+                        {messages.map((msg, idx) => (
+                            <div key={idx} className={`message ${msg.role}`}>
+                                {msg.content}
+                            </div>
+                        ))}
+                        {loading && (
+                            <div className="message assistant">
+                                <div className="spinner" style={{width: '20px', height: '20px', borderWidth: '3px'}}></div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="chat-input-container">
+                        <input
+                            type="text"
+                            className="chat-input"
+                            placeholder="Type your question..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            disabled={loading}
+                        />
+                        <button 
+                            className="btn btn-primary"
+                            onClick={sendMessage}
+                            disabled={loading || !input.trim()}
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Image Upload Component
+        function ImageUpload() {
+            const [file, setFile] = useState(null);
+            const [preview, setPreview] = useState(null);
+            const [interests, setInterests] = useState('');
+            const [location, setLocation] = useState('');
+            const [familyIncome, setFamilyIncome] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [result, setResult] = useState(null);
+            const [error, setError] = useState(null);
+            const [dragOver, setDragOver] = useState(false);
+
+            const handleFileChange = (e) => {
+                const selectedFile = e.target.files[0];
+                if (selectedFile) {
+                    setFile(selectedFile);
+                    setPreview(URL.createObjectURL(selectedFile));
+                    setError(null);
+                }
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setDragOver(false);
+                const droppedFile = e.dataTransfer.files[0];
+                if (droppedFile && droppedFile.type.startsWith('image/')) {
+                    setFile(droppedFile);
+                    setPreview(URL.createObjectURL(droppedFile));
+                    setError(null);
+                }
+            };
+
+            const handleSubmit = async () => {
+                if (!file) {
+                    setError('Please upload your SPM result slip image first');
+                    return;
+                }
+
+                setLoading(true);
+                setError(null);
+                setResult(null);
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('interests', interests);
+                formData.append('location', location);
+                formData.append('familyIncome', familyIncome);
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/analyze-spm-image`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        setResult(data);
+                    } else {
+                        setError(data.message || 'Analysis failed, please try again');
+                    }
+                } catch (err) {
+                    setError('Failed to connect to server. Please ensure the backend service is running.');
+                }
+
+                setLoading(false);
+            };
+
+            const reset = () => {
+                setFile(null);
+                setPreview(null);
+                setResult(null);
+                setError(null);
+                setInterests('');
+                setLocation('');
+                setFamilyIncome('');
+            };
+
+            if (result) {
+                return <Results data={result} onReset={reset} />;
+            }
+
+            return (
+                <div>
+                    <h2 style={{marginBottom: '20px', color: '#333'}}>📸 Upload SPM Result Slip for Analysis</h2>
+                    
+                    {error && (
+                        <div className="alert alert-error">
+                            ⚠️ {error}
+                        </div>
+                    )}
+
+                    <div className="form-section">
+                        <h3>1. Upload Result Slip Image</h3>
+                        <div 
+                            className={`file-upload ${dragOver ? 'drag-over' : ''}`}
+                            onClick={() => document.getElementById('fileInput').click()}
+                            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                            onDragLeave={() => setDragOver(false)}
+                            onDrop={handleDrop}
+                        >
+                            <input
+                                id="fileInput"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                            {preview ? (
+                                <div>
+                                    <img src={preview} alt="Preview" style={{maxWidth: '100%', maxHeight: '300px', borderRadius: '8px'}} />
+                                    <p style={{marginTop: '15px', color: '#667eea', fontWeight: '600'}}>
+                                        ✓ Selected: {file.name}
+                                    </p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="file-upload-icon">📁</div>
+                                    <p style={{fontSize: '1.1em', color: '#667eea', fontWeight: '600'}}>
+                                        Click to upload or drag & drop image here
+                                    </p>
+                                    <p style={{marginTop: '10px', color: '#6c757d', fontSize: '0.9em'}}>
+                                        Supports JPG, PNG formats
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="form-section">
+                        <h3>2. Additional Information (Optional)</h3>
+                        
+                        <div className="form-group">
+                            <label>Interests & Hobbies</label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="e.g., Programming, Engineering, Medicine, Arts"
+                                value={interests}
+                                onChange={(e) => setInterests(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Preferred Location</label>
+                            <select 
+                                className="form-select"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                            >
+                                <option value="">Please Select</option>
+                                <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                <option value="Penang">Penang</option>
+                                <option value="Johor">Johor</option>
+                                <option value="Selangor">Selangor</option>
+                                <option value="Any">Any Location</option>
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Family Income Level</label>
+                            <select 
+                                className="form-select"
+                                value={familyIncome}
+                                onChange={(e) => setFamilyIncome(e.target.value)}
+                            >
+                                <option value="">Please Select</option>
+                                <option value="Low">Low Income (&lt; RM 3,000)</option>
+                                <option value="Medium">Medium Income (RM 3,000 - RM 8,000)</option>
+                                <option value="High">High Income (&gt; RM 8,000)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="button-group">
+                        <button 
+                            className="btn btn-primary"
+                            onClick={handleSubmit}
+                            disabled={loading || !file}
+                        >
+                            {loading ? 'Analyzing...' : '🚀 Start Analysis'}
+                        </button>
+                        {file && (
+                            <button 
+                                className="btn btn-secondary"
+                                onClick={reset}
+                                disabled={loading}
+                            >
+                                Reset
+                            </button>
+                        )}
+                    </div>
+
+                    {loading && (
+                        <div className="loading" style={{marginTop: '30px'}}>
+                            <div className="spinner"></div>
+                            <p style={{marginTop: '20px', color: '#667eea', fontSize: '1.1em'}}>
+                                Analyzing your result slip, please wait...
+                            </p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Manual Input Component
+        function ManualInput() {
+            const [subjects, setSubjects] = useState([
+                { name: '', grade: '' }
+            ]);
+            const [interests, setInterests] = useState('');
+            const [location, setLocation] = useState('');
+            const [familyIncome, setFamilyIncome] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [result, setResult] = useState(null);
+            const [error, setError] = useState(null);
+
+            const commonSubjects = [
+                'Bahasa Melayu', 'English', 'Mathematics', 'Additional Mathematics',
+                'Physics', 'Chemistry', 'Biology', 'History', 'Economics',
+                'Accounting', 'Business Studies', 'Geography', 'Science',
+                'Moral Education', 'Islamic Studies'
+            ];
+
+            const grades = ['A+', 'A', 'A-', 'B+', 'B', 'C+', 'C', 'D', 'E', 'G', 'F'];
+
+            const addSubject = () => {
+                setSubjects([...subjects, { name: '', grade: '' }]);
+            };
+
+            const removeSubject = (index) => {
+                if (subjects.length > 1) {
+                    setSubjects(subjects.filter((_, i) => i !== index));
+                }
+            };
+
+            const updateSubject = (index, field, value) => {
+                const updated = [...subjects];
+                updated[index][field] = value;
+                setSubjects(updated);
+            };
+
+            const handleSubmit = async () => {
+                const validSubjects = subjects.filter(s => s.name && s.grade);
+                
+                if (validSubjects.length === 0) {
+                    setError('Please enter at least one subject and grade');
+                    return;
+                }
+
+                setLoading(true);
+                setError(null);
+                setResult(null);
+
+                const requestData = {
+                    subjects: validSubjects,
+                    interests,
+                    location,
+                    familyIncome
+                };
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/analyze-spm-manual`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        setResult(data);
+                    } else {
+                        setError(data.message || 'Analysis failed, please try again');
+                    }
+                } catch (err) {
+                    setError('Failed to connect to server. Please ensure the backend service is running.');
+                }
+
+                setLoading(false);
+            };
+
+            const reset = () => {
+                setSubjects([{ name: '', grade: '' }]);
+                setResult(null);
+                setError(null);
+                setInterests('');
+                setLocation('');
+                setFamilyIncome('');
+            };
+
+            if (result) {
+                return <Results data={result} onReset={reset} />;
+            }
+
+            return (
+                <div>
+                    <h2 style={{marginBottom: '20px', color: '#333'}}>✏️ Manual Entry of SPM Results</h2>
+                    
+                    {error && (
+                        <div className="alert alert-error">
+                            ⚠️ {error}
+                        </div>
+                    )}
+
+                    <div className="form-section">
+                        <h3>1. SPM Subjects & Grades</h3>
+                        
+                        {subjects.map((subject, index) => (
+                            <div key={index} className="subject-row">
+                                <select
+                                    className="form-select"
+                                    value={subject.name}
+                                    onChange={(e) => updateSubject(index, 'name', e.target.value)}
+                                >
+                                    <option value="">Select Subject</option>
+                                    {commonSubjects.map(subj => (
+                                        <option key={subj} value={subj}>{subj}</option>
+                                    ))}
+                                    <option value="Other">Other Subject</option>
+                                </select>
+
+                                {subject.name === 'Other' ? (
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="Enter subject name"
+                                        onChange={(e) => updateSubject(index, 'name', e.target.value)}
+                                    />
+                                ) : null}
+
+                                <select
+                                    className="form-select"
+                                    value={subject.grade}
+                                    onChange={(e) => updateSubject(index, 'grade', e.target.value)}
+                                >
+                                    <option value="">Select Grade</option>
+                                    {grades.map(grade => (
+                                        <option key={grade} value={grade}>{grade}</option>
+                                    ))}
+                                </select>
+
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => removeSubject(index)}
+                                    disabled={subjects.length === 1}
+                                    style={{padding: '12px 20px'}}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+
+                        <button 
+                            className="btn btn-success"
+                            onClick={addSubject}
+                            style={{marginTop: '10px'}}
+                        >
+                            ➕ Add Subject
+                        </button>
+                    </div>
+
+                    <div className="form-section">
+                        <h3>2. Additional Information (Optional)</h3>
+                        
+                        <div className="form-group">
+                            <label>Interests & Hobbies</label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                placeholder="e.g., Programming, Engineering, Medicine, Arts"
+                                value={interests}
+                                onChange={(e) => setInterests(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Preferred Location</label>
+                            <select 
+                                className="form-select"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                            >
+                                <option value="">Please Select</option>
+                                <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                <option value="Penang">Penang</option>
+                                <option value="Johor">Johor</option>
+                                <option value="Selangor">Selangor</option>
+                                <option value="Any">Any Location</option>
+                            </select>
+                        </div>
+
+                        <div className="form-group">
+                            <label>Family Income Level</label>
+                            <select 
+                                className="form-select"
+                                value={familyIncome}
+                                onChange={(e) => setFamilyIncome(e.target.value)}
+                            >
+                                <option value="">Please Select</option>
+                                <option value="Low">Low Income (&lt; RM 3,000)</option>
+                                <option value="Medium">Medium Income (RM 3,000 - RM 8,000)</option>
+                                <option value="High">High Income (&gt; RM 8,000)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="button-group">
+                        <button 
+                            className="btn btn-primary"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
+                            {loading ? 'Analyzing...' : '🚀 Start Analysis'}
+                        </button>
+                        <button 
+                            className="btn btn-secondary"
+                            onClick={reset}
+                            disabled={loading}
+                        >
+                            Reset
+                        </button>
+                    </div>
+
+                    {loading && (
+                        <div className="loading" style={{marginTop: '30px'}}>
+                            <div className="spinner"></div>
+                            <p style={{marginTop: '20px', color: '#667eea', fontSize: '1.1em'}}>
+                                Analyzing your results, please wait...
+                            </p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Results Display Component
+        function Results({ data, onReset }) {
+            const getGradeClass = (grade) => {
+                if (grade.includes('A')) return 'grade-A-plus';
+                if (grade.includes('B')) return 'grade-B-plus';
+                return 'grade-C-plus';
+            };
+
+            const getMatchClass = (match) => {
+                if (match === 'High') return 'match-high';
+                if (match === 'Medium') return 'match-medium';
+                return 'match-low';
+            };
+
+            const getMatchText = (match) => {
+                if (match === 'High') return 'High Match';
+                if (match === 'Medium') return 'Medium Match';
+                return 'Low Match';
+            };
+
+            return (
+                <div className="results-container">
+                    <div className="alert alert-success">
+                        ✓ Analysis Complete! Here are your personalized education recommendations
+                    </div>
+
+                    {/* Extracted Subjects */}
+                    {data.extractedSubjects && data.extractedSubjects.length > 0 && (
+                        <div className="results-section">
+                            <h3>📊 Your SPM Results</h3>
+                            <table className="subjects-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data.extractedSubjects.map((subject, idx) => (
+                                        <tr key={idx}>
+                                            <td>{subject.name}</td>
+                                            <td>
+                                                <span className={`grade-badge ${getGradeClass(subject.grade)}`}>
+                                                    {subject.grade}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
+                    {/* Recommended Universities */}
+                    {data.universities && data.universities.length > 0 && (
+                        <div className="results-section">
+                            <h3>🏛️ Recommended Universities (Top 5)</h3>
+                            {data.universities.map((uni, idx) => (
+                                <div key={idx} className="recommendation-card">
+                                    <h4>{idx + 1}. {uni.name}</h4>
+                                    <p>{uni.description}</p>
+                                    <p style={{fontSize: '0.9em', color: '#495057'}}>
+                                        <strong>Why Recommended:</strong> {uni.reason}
+                                    </p>
+                                    <span className={`match-badge ${getMatchClass(uni.matchLevel)}`}>
+                                        {getMatchText(uni.matchLevel)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Recommended Courses */}
+                    {data.courses && data.courses.length > 0 && (
+                        <div className="results-section">
+                            <h3>📚 Recommended Courses (Top 5)</h3>
+                            {data.courses.map((course, idx) => (
+                                <div key={idx} className="recommendation-card">
+                                    <h4>{idx + 1}. {course.name}</h4>
+                                    <p>{course.description}</p>
+                                    <p style={{fontSize: '0.9em', color: '#495057'}}>
+                                        <strong>Why Suitable:</strong> {course.reason}
+                                    </p>
+                                    <span className={`match-badge ${getMatchClass(course.matchLevel)}`}>
+                                        {getMatchText(course.matchLevel)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Recommended Scholarships */}
+                    {data.scholarships && data.scholarships.length > 0 && (
+                        <div className="results-section">
+                            <h3>💰 Recommended Scholarships (Top 5)</h3>
+                            {data.scholarships.map((scholarship, idx) => (
+                                <div key={idx} className="recommendation-card">
+                                    <h4>{idx + 1}. {scholarship.name}</h4>
+                                    <p>{scholarship.description}</p>
+                                    <p style={{fontSize: '0.9em', color: '#495057'}}>
+                                        <strong>Eligibility Assessment:</strong> {scholarship.reason}
+                                    </p>
+                                    <span className={`match-badge ${getMatchClass(scholarship.matchLevel)}`}>
+                                        Application Difficulty: {getMatchText(scholarship.matchLevel)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Overall Summary */}
+                    {data.summary && (
+                        <div className="results-section">
+                            <h3>📝 Overall Analysis & Recommendations</h3>
+                            <div className="summary-box">
+                                {data.summary}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="button-group">
+                        <button 
+                            className="btn btn-primary"
+                            onClick={onReset}
+                        >
+                            ← Back to Analysis
+                        </button>
+                        <button 
+                            className="btn btn-success"
+                            onClick={() => window.print()}
+                        >   
+                            🖨️ Print Results
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render App
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
