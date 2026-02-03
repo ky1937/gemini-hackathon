@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: gemini-hackathon
+    runtime: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/spm-guidance-assistant-1.0.0.jar
